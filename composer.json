@@ -6,10 +6,13 @@
         "ext-ctype": "*",
         "ext-iconv": "*",
         "api-platform/api-pack": "^1.1",
+        "lexik/jwt-authentication-bundle": "^2.5",
         "symfony/console": "*",
         "symfony/flex": "^1.1",
+        "symfony/form": "*",
         "symfony/framework-bundle": "*",
         "symfony/orm-pack": "^1.0",
+        "symfony/security-bundle": "*",
         "symfony/yaml": "*"
     },
     "require-dev": {
