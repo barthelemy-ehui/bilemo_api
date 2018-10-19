@@ -12,8 +12,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ApiResource(
- *      normalizationContext={"groups"={"user", "user:read"}},
- *      denormalizationContext={"groups"={"user", "user:write"}}
+ *     collectionOperations={"get","post"},
+ *     itemOperations={"get","delete"}
  * )
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  */
@@ -51,29 +51,28 @@ class User implements UserInterface, \Serializable
     private $password;
     
     /**
-     * @Groups({"user:write"})
-     */
-    private $plainPassword;
-    
-    /**
      * @ORM\Column(type="array")
      */
     private $roles = [];
-
-    /**
-     * @ORM\Column(type="datetime")
-     */
-    private $created_at;
-
+    
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Product", mappedBy="User")
      */
     private $products;
 
+    /**
+     * @ORM\OneToOne(targetEntity="App\Entity\User", inversedBy="user", cascade={"persist", "remove"})
+     */
+    private $Parent;
+
+    /**
+     * @ORM\OneToOne(targetEntity="App\Entity\User", mappedBy="Parent", cascade={"persist", "remove"})
+     */
+    private $user;
+
     public function __construct()
     {
         $this->products = new ArrayCollection();
-        $this->isActive = true;
     }
 
     public function getId(): ?int
@@ -201,22 +200,6 @@ class User implements UserInterface, \Serializable
     }
     
     /**
-     * @return mixed
-     */
-    public function getisActive()
-    {
-        return $this->isActive;
-    }
-    
-    /**
-     * @param mixed $isActive
-     */
-    public function setIsActive($isActive): void
-    {
-        $this->isActive = $isActive;
-    }
-    
-    /**
      * String representation of object
      * @link http://php.net/manual/en/serializable.serialize.php
      * @return string the string representation of the object or null
@@ -247,5 +230,35 @@ class User implements UserInterface, \Serializable
             $this->username,
             $this->password
             ) = unserialize($serialized, ['allowed_classes' => false]);
+    }
+
+    public function getParent(): ?self
+    {
+        return $this->Parent;
+    }
+
+    public function setParent(?self $Parent): self
+    {
+        $this->Parent = $Parent;
+
+        return $this;
+    }
+
+    public function getUser(): ?self
+    {
+        return $this->user;
+    }
+
+    public function setUser(?self $user): self
+    {
+        $this->user = $user;
+
+        // set (or unset) the owning side of the relation if necessary
+        $newParent = $user === null ? null : $this;
+        if ($newParent !== $user->getParent()) {
+            $user->setParent($newParent);
+        }
+
+        return $this;
     }
 }
