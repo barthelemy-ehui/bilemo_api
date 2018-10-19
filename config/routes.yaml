@@ -1,3 +1,13 @@
-api_login_check:
+register:
+  path: /register
+  controller: App\Controller\AuthController::register
+  methods: POST
+
+api:
+  path: /api/logged/info
+  controller: App\Controller\AuthController::api
+
+login_check:
   path: /api/login_check
+  methods: [POST]
 
