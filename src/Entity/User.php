@@ -40,12 +40,7 @@ class User implements UserInterface, \Serializable
     private $email;
     
     /**
-     * @ORM\Column(name="is_active", type="boolean")
-     */
-    private $isActive;
-
-    /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      * @Assert\NotBlank
      */
     private $password;
@@ -61,15 +56,10 @@ class User implements UserInterface, \Serializable
     private $products;
 
     /**
-     * @ORM\OneToOne(targetEntity="App\Entity\User", inversedBy="user", cascade={"persist", "remove"})
+     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="user", cascade={"persist", "remove"})
      */
     private $Parent;
-
-    /**
-     * @ORM\OneToOne(targetEntity="App\Entity\User", mappedBy="Parent", cascade={"persist", "remove"})
-     */
-    private $user;
-
+    
     public function __construct()
     {
         $this->products = new ArrayCollection();
@@ -104,7 +94,7 @@ class User implements UserInterface, \Serializable
         return $this->password;
     }
 
-    public function setPassword(string $password): self
+    public function setPassword(?string $password): self
     {
         $this->password = $password;
 
@@ -119,18 +109,6 @@ class User implements UserInterface, \Serializable
     public function setRoles(array $roles): self
     {
         $this->roles = $roles;
-
-        return $this;
-    }
-
-    public function getCreatedAt(): ?\DateTimeInterface
-    {
-        return $this->created_at;
-    }
-
-    public function setCreatedAt(\DateTimeInterface $created_at): self
-    {
-        $this->created_at = $created_at;
 
         return $this;
     }
@@ -243,22 +221,5 @@ class User implements UserInterface, \Serializable
 
         return $this;
     }
-
-    public function getUser(): ?self
-    {
-        return $this->user;
-    }
-
-    public function setUser(?self $user): self
-    {
-        $this->user = $user;
-
-        // set (or unset) the owning side of the relation if necessary
-        $newParent = $user === null ? null : $this;
-        if ($newParent !== $user->getParent()) {
-            $user->setParent($newParent);
-        }
-
-        return $this;
-    }
+    
 }

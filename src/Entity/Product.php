@@ -95,7 +95,6 @@ class Product
     public function setUser(?User $User): self
     {
         $this->User = $User;
-
         return $this;
     }
 }
