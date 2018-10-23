@@ -4,10 +4,12 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ApiResource(
+ *     normalizationContext={"groups"={"get"}},
  *     collectionOperations={"get"},
  *     itemOperations={"get"}
  * )
@@ -25,18 +27,21 @@ class Product
     /**
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank
+     * @Groups({"get"})
      */
     private $name;
 
     /**
      * @ORM\Column(type="text", nullable=true)
      * @Assert\NotBlank
+     * @Groups({"get"})
      */
     private $description;
 
     /**
      * @ORM\Column(type="float", nullable=true)
      * @Assert\NotBlank
+     * @Groups({"get"})
      */
     private $price;
 

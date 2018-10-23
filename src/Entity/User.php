@@ -2,6 +2,9 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Core\Annotation\ApiSubresource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -12,6 +15,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ApiResource(
+ *     normalizationContext={"groups"={"get","post","delete"}},
  *     collectionOperations={"get","post"},
  *     itemOperations={"get","delete"}
  * )
@@ -25,23 +29,34 @@ class User implements UserInterface, \Serializable
      * @ORM\Column(type="integer")
      */
     private $id;
-
+    
+    /**
+     * @ORM\Column(type="string")
+     * @Groups({"get","post","delete"})
+     */
+    private $lastname;
+    
+    /**
+     * @ORM\Column(type="string")
+     * @Groups({"get","post","delete"})
+     */
+    private $firstname;
+    
     /**
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank
-     * @Groups({"user"})
+     * @Groups({"get","post","delete"})
      */
     private $username;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"user"})
+     * @Groups({"get","post","delete"})
      */
     private $email;
     
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Assert\NotBlank
      */
     private $password;
     
@@ -51,18 +66,12 @@ class User implements UserInterface, \Serializable
     private $roles = [];
     
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Product", mappedBy="User")
-     */
-    private $products;
-
-    /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="user", cascade={"persist", "remove"})
      */
     private $Parent;
     
     public function __construct()
     {
-        $this->products = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -109,37 +118,6 @@ class User implements UserInterface, \Serializable
     public function setRoles(array $roles): self
     {
         $this->roles = $roles;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|Product[]
-     */
-    public function getProducts(): Collection
-    {
-        return $this->products;
-    }
-
-    public function addProduct(Product $product): self
-    {
-        if (!$this->products->contains($product)) {
-            $this->products[] = $product;
-            $product->setUser($this);
-        }
-
-        return $this;
-    }
-
-    public function removeProduct(Product $product): self
-    {
-        if ($this->products->contains($product)) {
-            $this->products->removeElement($product);
-            // set the owning side to null (unless already changed)
-            if ($product->getUser() === $this) {
-                $product->setUser(null);
-            }
-        }
 
         return $this;
     }
@@ -220,6 +198,38 @@ class User implements UserInterface, \Serializable
         $this->Parent = $Parent;
 
         return $this;
+    }
+    
+    /**
+     * @return mixed
+     */
+    public function getLastname()
+    {
+        return $this->lastname;
+    }
+    
+    /**
+     * @param mixed $lastname
+     */
+    public function setLastname($lastname): void
+    {
+        $this->lastname = $lastname;
+    }
+    
+    /**
+     * @return mixed
+     */
+    public function getFirstname()
+    {
+        return $this->firstname;
+    }
+    
+    /**
+     * @param mixed $firstname
+     */
+    public function setFirstname($firstname): void
+    {
+        $this->firstname = $firstname;
     }
     
 }
