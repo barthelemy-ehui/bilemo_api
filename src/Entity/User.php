@@ -2,6 +2,9 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Core\Annotation\ApiSubresource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -12,8 +15,9 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ApiResource(
- *      normalizationContext={"groups"={"user", "user:read"}},
- *      denormalizationContext={"groups"={"user", "user:write"}}
+ *     normalizationContext={"groups"={"get","post","delete"}},
+ *     collectionOperations={"get","post"},
+ *     itemOperations={"get","delete"}
  * )
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  */
@@ -25,55 +29,49 @@ class User implements UserInterface, \Serializable
      * @ORM\Column(type="integer")
      */
     private $id;
-
+    
+    /**
+     * @ORM\Column(type="string")
+     * @Groups({"get","post","delete"})
+     */
+    private $lastname;
+    
+    /**
+     * @ORM\Column(type="string")
+     * @Groups({"get","post","delete"})
+     */
+    private $firstname;
+    
     /**
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank
-     * @Groups({"user"})
+     * @Groups({"get","post","delete"})
      */
     private $username;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"user"})
+     * @Groups({"get","post","delete"})
      */
     private $email;
     
     /**
-     * @ORM\Column(name="is_active", type="boolean")
-     */
-    private $isActive;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $password;
-    
-    /**
-     * @Groups({"user:write"})
-     */
-    private $plainPassword;
     
     /**
      * @ORM\Column(type="array")
      */
     private $roles = [];
-
+    
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="user", cascade={"persist", "remove"})
      */
-    private $created_at;
-
-    /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Product", mappedBy="User")
-     */
-    private $products;
-
+    private $Parent;
+    
     public function __construct()
     {
-        $this->products = new ArrayCollection();
-        $this->isActive = true;
     }
 
     public function getId(): ?int
@@ -105,7 +103,7 @@ class User implements UserInterface, \Serializable
         return $this->password;
     }
 
-    public function setPassword(string $password): self
+    public function setPassword(?string $password): self
     {
         $this->password = $password;
 
@@ -120,49 +118,6 @@ class User implements UserInterface, \Serializable
     public function setRoles(array $roles): self
     {
         $this->roles = $roles;
-
-        return $this;
-    }
-
-    public function getCreatedAt(): ?\DateTimeInterface
-    {
-        return $this->created_at;
-    }
-
-    public function setCreatedAt(\DateTimeInterface $created_at): self
-    {
-        $this->created_at = $created_at;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|Product[]
-     */
-    public function getProducts(): Collection
-    {
-        return $this->products;
-    }
-
-    public function addProduct(Product $product): self
-    {
-        if (!$this->products->contains($product)) {
-            $this->products[] = $product;
-            $product->setUser($this);
-        }
-
-        return $this;
-    }
-
-    public function removeProduct(Product $product): self
-    {
-        if ($this->products->contains($product)) {
-            $this->products->removeElement($product);
-            // set the owning side to null (unless already changed)
-            if ($product->getUser() === $this) {
-                $product->setUser(null);
-            }
-        }
 
         return $this;
     }
@@ -201,22 +156,6 @@ class User implements UserInterface, \Serializable
     }
     
     /**
-     * @return mixed
-     */
-    public function getisActive()
-    {
-        return $this->isActive;
-    }
-    
-    /**
-     * @param mixed $isActive
-     */
-    public function setIsActive($isActive): void
-    {
-        $this->isActive = $isActive;
-    }
-    
-    /**
      * String representation of object
      * @link http://php.net/manual/en/serializable.serialize.php
      * @return string the string representation of the object or null
@@ -248,4 +187,49 @@ class User implements UserInterface, \Serializable
             $this->password
             ) = unserialize($serialized, ['allowed_classes' => false]);
     }
+
+    public function getParent(): ?self
+    {
+        return $this->Parent;
+    }
+
+    public function setParent(?self $Parent): self
+    {
+        $this->Parent = $Parent;
+
+        return $this;
+    }
+    
+    /**
+     * @return mixed
+     */
+    public function getLastname()
+    {
+        return $this->lastname;
+    }
+    
+    /**
+     * @param mixed $lastname
+     */
+    public function setLastname($lastname): void
+    {
+        $this->lastname = $lastname;
+    }
+    
+    /**
+     * @return mixed
+     */
+    public function getFirstname()
+    {
+        return $this->firstname;
+    }
+    
+    /**
+     * @param mixed $firstname
+     */
+    public function setFirstname($firstname): void
+    {
+        $this->firstname = $firstname;
+    }
+    
 }
