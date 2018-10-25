@@ -46,10 +46,10 @@ class Product
     private $price;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="products")
+     * @ORM\ManyToOne(targetEntity="Client", inversedBy="products")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $User;
+    private $Client;
 
     public function getId(): ?int
     {
@@ -92,14 +92,14 @@ class Product
         return $this;
     }
 
-    public function getUser(): ?User
+    public function getClient(): ?Client
     {
-        return $this->User;
+        return $this->Client;
     }
 
-    public function setUser(?User $User): self
+    public function setClient(?Client $Client): self
     {
-        $this->User = $User;
+        $this->Client = $Client;
         return $this;
     }
 }

@@ -14,14 +14,9 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * @ApiResource(
- *     normalizationContext={"groups"={"get","post","delete"}},
- *     collectionOperations={"get","post"},
- *     itemOperations={"get","delete"}
- * )
- * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
+ * @ORM\Entity(repositoryClass="App\Repository\ClientRepository")
  */
-class User implements UserInterface, \Serializable
+class Client implements UserInterface, \Serializable
 {
     /**
      * @ORM\Id()
@@ -31,21 +26,8 @@ class User implements UserInterface, \Serializable
     private $id;
     
     /**
-     * @ORM\Column(type="string")
-     * @Groups({"get","post","delete"})
-     */
-    private $lastname;
-    
-    /**
-     * @ORM\Column(type="string")
-     * @Groups({"get","post","delete"})
-     */
-    private $firstname;
-    
-    /**
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank
-     * @Groups({"get","post","delete"})
      */
     private $username;
 
@@ -66,12 +48,13 @@ class User implements UserInterface, \Serializable
     private $roles = [];
     
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="user", cascade={"persist", "remove"})
+     * @ORM\OneToMany(targetEntity="App\Entity\User", mappedBy="client", orphanRemoval=true)
      */
-    private $Parent;
+    private $users;
     
     public function __construct()
     {
+        $this->users = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -188,48 +171,34 @@ class User implements UserInterface, \Serializable
             ) = unserialize($serialized, ['allowed_classes' => false]);
     }
 
-    public function getParent(): ?self
+    /**
+     * @return Collection|User[]
+     */
+    public function getUsers(): Collection
     {
-        return $this->Parent;
+        return $this->users;
     }
 
-    public function setParent(?self $Parent): self
+    public function addUser(User $user): self
     {
-        $this->Parent = $Parent;
+        if (!$this->users->contains($user)) {
+            $this->users[] = $user;
+            $user->setClient($this);
+        }
 
         return $this;
     }
-    
-    /**
-     * @return mixed
-     */
-    public function getLastname()
+
+    public function removeUser(User $user): self
     {
-        return $this->lastname;
+        if ($this->users->contains($user)) {
+            $this->users->removeElement($user);
+            // set the owning side to null (unless already changed)
+            if ($user->getClient() === $this) {
+                $user->setClient(null);
+            }
+        }
+
+        return $this;
     }
-    
-    /**
-     * @param mixed $lastname
-     */
-    public function setLastname($lastname): void
-    {
-        $this->lastname = $lastname;
-    }
-    
-    /**
-     * @return mixed
-     */
-    public function getFirstname()
-    {
-        return $this->firstname;
-    }
-    
-    /**
-     * @param mixed $firstname
-     */
-    public function setFirstname($firstname): void
-    {
-        $this->firstname = $firstname;
-    }
-    
 }
