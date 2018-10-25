@@ -3,6 +3,7 @@ namespace App\EventSubscriber;
 
 
 use ApiPlatform\Core\EventListener\EventPriorities;
+use App\Entity\Client;
 use App\Entity\User;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -50,14 +51,14 @@ class CurrentUserSubscriber implements EventSubscriberInterface
     
     public function setCurrentUser(GetResponseForControllerResultEvent $event) {
         
-        $user = $event->getControllerResult();
+        $client = $event->getControllerResult();
         $method = $event->getRequest()->getMethod();
     
-        if (!$user instanceof User || Request::METHOD_POST !== $method) {
+        if (!$client instanceof User || Request::METHOD_POST !== $method) {
             return;
         }
     
-        $user->setParent($this->tokenStorage->getToken()->getUser());
-        $event->setControllerResult($user);
+        $client->setClient($this->tokenStorage->getToken()->getUser());
+        $event->setControllerResult($client);
     }
 }
