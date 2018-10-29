@@ -10,7 +10,9 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * @ApiResource(
  *     normalizationContext={"groups"={"get"}},
- *     collectionOperations={"get"},
+ *     collectionOperations={
+ *     "get"={"normalization_context"={"groups"={"get"}}}
+ *     },
  *     itemOperations={"get"}
  * )
  * @ORM\Entity(repositoryClass="App\Repository\ProductRepository")
@@ -34,14 +36,12 @@ class Product
     /**
      * @ORM\Column(type="text", nullable=true)
      * @Assert\NotBlank
-     * @Groups({"get"})
      */
     private $description;
 
     /**
      * @ORM\Column(type="float", nullable=true)
      * @Assert\NotBlank
-     * @Groups({"get"})
      */
     private $price;
 
