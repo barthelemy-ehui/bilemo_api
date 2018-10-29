@@ -13,7 +13,10 @@ use Symfony\Component\Serializer\Annotation\Groups;
 /**
  * @ApiResource(
  *     normalizationContext={"groups"={"get","post","delete"}},
- *     collectionOperations={"get","post"},
+ *     collectionOperations={"get"={
+ *     "normalization_context"={"groups"={"get"}}
+ *     },
+ *     "post"},
  *     itemOperations={"get","delete"}
  * )
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
@@ -48,13 +51,13 @@ class User
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"get","post","delete"})
+     * @Groups({"post","delete"})
      */
     private $address;
     
     /**
      * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"get","post","delete"})
+     * @Groups({"post","delete"})
      */
     private $age;
 
