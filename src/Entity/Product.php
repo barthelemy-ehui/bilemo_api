@@ -9,7 +9,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ApiResource(
- *     normalizationContext={"groups"={"get"}},
  *     collectionOperations={
  *     "get"={"normalization_context"={"groups"={"get"}}}
  *     },
@@ -44,12 +43,6 @@ class Product
      * @Assert\NotBlank
      */
     private $price;
-
-    /**
-     * @ORM\ManyToOne(targetEntity="Client", inversedBy="products")
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $Client;
 
     public function getId(): ?int
     {
@@ -89,17 +82,6 @@ class Product
     {
         $this->price = $price;
 
-        return $this;
-    }
-
-    public function getClient(): ?Client
-    {
-        return $this->Client;
-    }
-
-    public function setClient(?Client $Client): self
-    {
-        $this->Client = $Client;
         return $this;
     }
 }

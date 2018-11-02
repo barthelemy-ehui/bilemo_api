@@ -51,14 +51,15 @@ class CurrentUserSubscriber implements EventSubscriberInterface
     
     public function setCurrentUser(GetResponseForControllerResultEvent $event) {
         
-        $client = $event->getControllerResult();
+        $user = $event->getControllerResult();
         $method = $event->getRequest()->getMethod();
     
-        if (!$client instanceof User || Request::METHOD_POST !== $method) {
+        // dd($user);
+        if (!$user instanceof User || Request::METHOD_POST !== $method) {
             return;
         }
     
-        $client->setClient($this->tokenStorage->getToken()->getUser());
-        $event->setControllerResult($client);
+        $user->setClient($this->tokenStorage->getToken()->getUser());
+        $event->setControllerResult($user);
     }
 }
