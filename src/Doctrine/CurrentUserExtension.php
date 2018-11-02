@@ -5,6 +5,7 @@ namespace App\Doctrine;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryCollectionExtensionInterface;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryItemExtensionInterface;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGeneratorInterface;
+use App\Entity\User;
 use Doctrine\ORM\QueryBuilder;
 use App\Entity\Product;
 use App\Entity\Client;
@@ -37,17 +38,11 @@ final class CurrentUserExtension implements
     
     private function addWhere(QueryBuilder $queryBuilder, string $resourceClass)
     {
-        $user = $this->tokenStorage->getToken()->getUser();
-        if($user instanceof Client && Product::class === $resourceClass) {
-            $rootAlias = $queryBuilder->getRootAliases()[0];
-            $queryBuilder->andWhere(sprintf('%s.Client = :current_user', $rootAlias));
-            $queryBuilder->setParameter('current_user', $user->getId());
-        }
-        
-        if($user instanceof Client && Client::class === $resourceClass) {
+        $currentuser = $this->tokenStorage->getToken()->getUser();
+        if($currentuser instanceof Client && User::class === $resourceClass) {
             $rootAlias = $queryBuilder->getRootAliases()[0];
             $queryBuilder->andWhere(sprintf('%s.client = :current_user', $rootAlias));
-            $queryBuilder->setParameter('current_user', $user->getId());
+            $queryBuilder->setParameter('current_user', $currentuser->getId());
         }
     }
     
