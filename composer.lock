@@ -4797,6 +4797,7 @@
                 "scaffolding"
             ],
             "time": "2018-11-03T18:25:11+00:00"
+<<<<<<< Updated upstream
         },
         {
             "name": "symfony/polyfill-php72",
@@ -5070,6 +5071,8 @@
             "description": "Symfony WebProfilerBundle",
             "homepage": "https://symfony.com",
             "time": "2018-09-30T03:38:13+00:00"
+=======
+>>>>>>> Stashed changes
         }
     ],
     "aliases": [],
