@@ -8,15 +8,15 @@ Usage
 
 To use the API, you have to follow this instruction
 
--  Registering a new client by calling
+- Registering a new client by calling
 
 `curl -X POST http://localhost:8080/register -d _username=johndoe -d _password=test -d _email=johndoe@gmail.com`
 
--  Get the token for authentification
+- Get the token for authentification
 
 `curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/login_check -d '{"username":"johndoe","password":"test"}'`
 
--  Test for authentification token
+- Test for authentification token
 
 `curl -H "Authorization: Bearer [token]" http://localhost:8000/api/logged/info`
 
