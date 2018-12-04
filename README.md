@@ -32,11 +32,11 @@ With postman, add the token inside the Authorization section.
 Here are all the URL useful for retrieving the necessary data.
 
 Users
--  Get all: /api/users
--  Post: /api/users
--  Get: /api/users/{id} 
--  Delete: /api/users/{id}
+- Get all: /api/users
+- Post: /api/users
+- Get: /api/users/{id} 
+- Delete: /api/users/{id}
 
 Products:
--  Get all: /api/products
--  Get: /api/products/{id} 
+- Get all: /api/products
+- Get: /api/products/{id} 
